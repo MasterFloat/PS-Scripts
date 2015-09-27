@@ -124,10 +124,9 @@ var TicTacToe = (function () {
 
         TicTacToe.prototype.end = function (message) {
                 if (message) {
-                        if (this.phase === 'waiting') {
-                                this.p1.send('|pm|' + this.p2.getIdentity() + '|' + this.p1.getIdentity() + '|/html <div class="message-error">' + message + '</div>');
-                                this.p2.send('|pm|' + this.p1.getIdentity() + '|' + this.p2.getIdentity() + '|/html <div class="message-error">' + message + '</div>');
-                        } else this.players.forEach(function (user) {
+                        if (this.phase === 'waiting') this.players.forEach(function (user) {
+                                user.send('|pm|' + this.p2.getIdentity() + '|' + this.p1.getIdentity() + '|/html <div class="message-error">' + message + '</div>');
+						} else this.players.forEach(function (user) {
                                 user.popup(message);
                         });
                 }
@@ -165,12 +164,12 @@ var cmds = {
                 var targetUser = (Users.get(target) ? Users.get(target).name : target);
                 target = Users.get(target);
                 if (!target || !target.connected) return this.sendReply('User ' + targetUser + ' is offline.');
-                if (user.userid === target.userid) return this.sendReply('You can\'t play Tic-Tac-Toe against yourself!');
+                if (user.userid === target.userid) return this.sendReply('You can\'t play Tic-Tac-Toe with yourself!');
                 if (user.userid in tttplayers) {
                         var game = tttgames[tttplayers[user.userid]];
                         if (game.phase === 'waiting') return this.sendReply('You have already requested ' + game.checkPlayer(user) + ' to a game of Tic-Tac-Toe. Wait for their response.');
                         if (game.checkPlayer(target)) return this.sendReply('You are already playing Tic-Tac-Toe with ' + target.name + '!');
-                        return this.sendReply('You are already playing Tic-Tac-Toe with another user. You cannot send a game request to ' + target.name + '.');
+                        return this.sendReply('You are already playing Tic-Tac-Toe with another user. You cannot ' + target.name + ' a request.');
                 }
                 if (target.userid in tttplayers) {
                         var game = tttgames[tttplayers[target.userid]];
