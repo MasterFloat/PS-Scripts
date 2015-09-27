@@ -1,11 +1,12 @@
 //Poof by SilverTactic (Siiilver)
 //These poofs support HTML, so go nuts :3
-const fileName = fileName;
+const fileName = 'config/poofs.json';
 
 var fs = require('fs');
 var poofoff = false;
+var poofs;
 try {
-	var poofs = JSON.parse(fs.readFileSync(fileName));
+	poofs = JSON.parse(fs.readFileSync(fileName));
 } catch (e) {
 	var list = ['used Explosion!', 'is blasting off again!', 'peered through the hole on Shedinja\'s back!', 'was smitten by Siiilver\'s mighty sword!', 
 		'leaves the server', 'forgot to pray to Lord Helix and is now paying the price!', 'was attacked by the closet monster!',
@@ -14,7 +15,7 @@ try {
 		if (!msg.match(/\(user\)/)) return '(user) ' + msg;
 	});
 	fs.writeFileSync(fileName, JSON.stringify(list, null, 1));
-	var poofs = JSON.parse(fs.readFileSync(fileName));
+	poofs = JSON.parse(fs.readFileSync(fileName));
 }
 function randomColor () {
 	var colors = ['9900f2', '4ca2ff', '4cff55', 'e87f00', 'd30007', '8e8080', 'd8b00d', '01776a', '0c4787', '0c870e', '8e892c',
@@ -41,7 +42,7 @@ exports.commands = {
 		this.add('|html|<center><span style = "color:#' + randomColor() + '"><b>~~ ' + message + ' ~~</b></span>');
 		user.disconnectAll();
 	},
-	
+
 	custompoof: 'cpoof',
 	cpoof: function (target, room, user) {
 		if (!this.canTalk()) return;
@@ -71,7 +72,7 @@ exports.commands = {
 		poofoff = !poofoff;
 		this.sendReply('Poofs have been ' + (poofoff ? 'disabled' : 'enabled') + '.');
 	},
-	
+
 	pooflist: function (target, room, user) {
 		var list = '|html|<center><b>Poof message list</b></center><br>';
 		poofs.forEach(function (msg) {
@@ -81,7 +82,7 @@ exports.commands = {
 		});
 		this.popupReply(list);
 	},
-	
+
 	deletepoof: function (target, room, user) {
 		if (!target || !target.trim()) return this.sendReply('|html|/deletepoof <em>Message</em> - Deletes the selected message from the list of poofs.');
 		if (!target.match(/\(user\)/)) target = '(user) ' + target;
