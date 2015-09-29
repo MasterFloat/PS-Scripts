@@ -40,7 +40,7 @@ var TicTacToe = (function () {
 		this.currentPlayer = this.players[Math.floor(Math.random() * 2)];
 		this.phase = 'started';
 		this.resetTimer();
-		var message = 'If you accidentally close out, use <em>/ttt open</em> to reopen the game.';
+		var message = 'If you accidentally close out, use <em><b>/ttt open</b></em> to reopen the game.';
 		this.updateUser(this.p1, message);
 		this.updateUser(this.p2, message);
 	};
@@ -101,7 +101,7 @@ var TicTacToe = (function () {
 	};
 
 	TicTacToe.prototype.checkWinner = function () {
-		if ((this.boxes['1'] === this.boxes['2'] && this.boxes['2'] === this.boxes['3']) || (this.boxes['4'] === this.boxes['5'] && this.boxes['5'] === this.boxes['6']) || (this.boxes['7'] === this.boxes['8'] && this.boxes['8'] === this.boxes['9']) || (this.boxes['1'] === this.boxes['4'] && this.boxes['4'] === this.boxes['7']) || (this.boxes['2'] === this.boxes['5'] && this.boxes['5'] === this.boxes['8']) || (this.boxes['3'] === this.boxes['4'] && this.boxes['6'] === this.boxes['9']) || (this.boxes['1'] === this.boxes['5'] && this.boxes['5'] === this.boxes['9']) || (this.boxes['3'] === this.boxes['5'] && this.boxes['5'] === this.boxes['7'])) {
+		if ((this.boxes['1'] === this.boxes['2'] && this.boxes['2'] === this.boxes['3']) || (this.boxes['4'] === this.boxes['5'] && this.boxes['5'] === this.boxes['6']) || (this.boxes['7'] === this.boxes['8'] && this.boxes['8'] === this.boxes['9']) || (this.boxes['1'] === this.boxes['4'] && this.boxes['4'] === this.boxes['7']) || (this.boxes['2'] === this.boxes['5'] && this.boxes['5'] === this.boxes['8']) || (this.boxes['3'] === this.boxes['6'] && this.boxes['6'] === this.boxes['9']) || (this.boxes['1'] === this.boxes['5'] && this.boxes['5'] === this.boxes['9']) || (this.boxes['3'] === this.boxes['5'] && this.boxes['5'] === this.boxes['7'])) {
 			this.declareWinner();
 			return true;
 		}
@@ -129,10 +129,10 @@ var TicTacToe = (function () {
 
 	TicTacToe.prototype.end = function (message) {
 		if (message) {
-			if (this.phase === 'waiting') this.players.forEach(function (user) {
-				user.send('|pm|' + this.p2.getIdentity() + '|' + this.p1.getIdentity() + '|/html <div class="message-error">' + message + '</div>');
-			});
-			else this.players.forEach(function (user) {
+			if (this.phase === 'waiting') {
+				message = '|pm|' + this.p2.getIdentity() + '|' + this.p1.getIdentity() + '|/error ' + message;
+			}
+			this.players.forEach(function (user) {
 				user.popup(message);
 			});
 		}
@@ -153,12 +153,13 @@ var TicTacToe = (function () {
 var cmds = {
 	'': 'help',
 	help: function (target, room, user) {
+		if (!this.canBroadcast()) return;
 		this.sendReplyBox('<b>Tic-Tac-Toe commands</b><br>' +
 			'<li>/ttt c <em>User</em> - Sends a user a request to play Tic-Tac-Toe. This can also be used in PMs. (Requests automatically expire if they\'re not accepted or declined within 1.5 minutes.)<br>' +
 			'<li>/ttt accept <em>User</em>  - Accepts a Tic-Tac-Toe request from a user.<br>' +
-			'<li>/ttc decline <em>User</em> - Declines a Tic-Tac-Toe request from a user.<br>' +
-			'<li>/ttc see or /ttt show - Opens up the Tic-Tac-Toe board, in case you accidentally closed it out.<br>' +
-			'<li>/ttc end - Exits the current game of Tic-Tac-Toe. Cancels a play request if the game hasn\'t been started yet. (Note: The game automatically ends after a user stays inactive for more than 30 seconds.)<br>'
+			'<li>/ttt decline <em>User</em> - Declines a Tic-Tac-Toe request from a user.<br>' +
+			'<li>/ttt see or /ttt show - Opens up the Tic-Tac-Toe board, in case you accidentally closed it out.<br>' +
+			'<li>/ttt end - Exits the current game of Tic-Tac-Toe. Cancels a play request if the game hasn\'t been started yet. (Note: The game automatically ends after a user stays inactive for more than 30 seconds.)<br>'
 		);
 	},
 
