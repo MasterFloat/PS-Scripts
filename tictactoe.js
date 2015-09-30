@@ -88,14 +88,14 @@ var TicTacToe = (function () {
 	};
 
 	TicTacToe.prototype.update = function () {
-		var message = '|html|<center><b>' + this.currentPlayer.name + '\'s turn!</b><br/>' + this.getGrid();
+		var message = '|html|<center><b style = "color:' + Core.color(this.currentPlayer.userid) + '">' + this.currentPlayer.name + '\'s turn!</b><br/>' + this.getGrid();
 		this.players.forEach(function (user) {
 			user.popup(message);
 		});
 	};
 
 	TicTacToe.prototype.updateUser = function (user, issue) {
-		var message = '|html|<center><b>' + this.currentPlayer.name + '\'s turn!</b><br>' +
+		var message = '|html|<center><b style = "color:' + Core.color(this.currentPlayer.userid) + '">' + this.currentPlayer.name + '\'s turn!</b><br>' +
 			this.getGrid() + (issue ? '<br>' + issue : '');
 		user.popup(message);
 	};
@@ -208,6 +208,7 @@ var cmds = {
 		if (user.userid === target.userid) return this.sendReply('You can\'t accept a challenge from yourself!');
 		if (!(target.userid in tttplayers)) return this.sendReply(target.name + ' has not challenged you to a game of Tic-Tac-Toe.');
 
+		this.sendReply('|html|If you accidentally close out the game screen, use <b>/ttt open</b> to reopen it.')
 		game = tttgames[tttplayers[target.userid]];
 		if (game.p2.userid !== user.userid) return this.sendReply(target.name + ' has not challenged you to a game of Tic-Tac-Toe.');
 		tttplayers[user.userid] = tttplayers[target.userid];
@@ -245,7 +246,7 @@ var cmds = {
 	see: function (target, room, user) {
 		if (!(user.userid in tttplayers)) return this.sendReply('You aren\'t playing a game of Tic-Tac-Toe right now.');
 		var game = tttgames[tttplayers[user.userid]];
-		if (game.phase === 'waiting') return this.sendReply('The request has not been accepted yet. You can only use this command in an active game.');
+		if (game.phase === 'waiting') return this.sendReply('Your request has not been accepted yet. You can only use this command in an active game.');
 		game.update();
 	},
 
