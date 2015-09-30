@@ -88,14 +88,14 @@ var TicTacToe = (function () {
 	};
 
 	TicTacToe.prototype.update = function () {
-		var message = '|html|<center><b style = "color:' + Core.color(this.currentPlayer.userid) + '">' + this.currentPlayer.name + '\'s turn!</b><br/>' + this.getGrid();
+		var message = '|html|<center><b>' + this.currentPlayer.name + '\'s turn!</b><br/>' + this.getGrid();
 		this.players.forEach(function (user) {
 			user.popup(message);
 		});
 	};
 
 	TicTacToe.prototype.updateUser = function (user, issue) {
-		var message = '|html|<center><b style = "color:' + Core.color(this.currentPlayer.userid) + '">' + this.currentPlayer.name + '\'s turn!</b><br>' +
+		var message = '|html|<center><b>' + this.currentPlayer.name + '\'s turn!</b><br>' +
 			this.getGrid() + (issue ? '<br>' + issue : '');
 		user.popup(message);
 	};
