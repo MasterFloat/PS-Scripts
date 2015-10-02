@@ -8,10 +8,10 @@ Tournaments.Tournament.prototype.onBattleWin = function (room, winner) {
 	var result = 'draw';
 	if (from === winner) {
 		result = 'win';
-		if (this.room.isOfficial && tourSize >= 4 && room.battle.endType !== 'forced') Ladders('tournaments').updateRating(from.name, to.name, 1, room);
+		if (this.room.isOfficial && tourSize >= 4 && room.battle.endType !== 'forced') tourLadder.updateRating(from.name, to.name, 1, room);
 	} else if (to === winner) {
 		result = 'loss';
-		if (this.room.isOfficial && tourSize >= 4 && room.battle.endType !== 'forced') Ladders('tournaments').updateRating(from.name, to.name, 0, room);
+		if (this.room.isOfficial && tourSize >= 4 && room.battle.endType !== 'forced') tourLadder.updateRating(from.name, to.name, 0, room);
 	}
 
 	if (result === 'draw' && !this.generator.isDrawingSupported) {
