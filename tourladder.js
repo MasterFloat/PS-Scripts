@@ -1,3 +1,5 @@
+var Ladders = require('ladders.js');
+var tourLadder = Ladders('tournaments');
 Tournaments.Tournament.prototype.onBattleWin = function (room, winner) {
 	var from = Users.get(room.p1);
 	var to = Users.get(room.p2);
@@ -29,7 +31,6 @@ Tournaments.Tournament.prototype.onBattleWin = function (room, winner) {
 
 	var error = this.generator.setMatchResult([from, to], result, room.battle.score);
 	if (error) {
-		// Should never happen
 		return this.room.add("Unexpected " + error + " from setMatchResult([" + from.userid + ", " + to.userid + "], " + result + ", " + room.battle.score + ") in onBattleWin(" + room.id + ", " + winner.userid + "). Please report this to an admin.").update();
 	}
 
