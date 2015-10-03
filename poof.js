@@ -39,7 +39,7 @@ exports.commands = {
 		if (!this.canTalk()) return;
 		if (poofoff) return this.sendReply("Poofs are currently disabled.");
 		var message = poofs[Math.floor(Math.random() * poofs.length)].replace(/\(user\)/g, Tools.escapeHTML(user.name));
-		this.add('|html|<center><span style = "color:#' + randomColor() + '"><b>~~ ' + message + ' ~~</b></span>');
+		this.add('|html|<center><span style = "color:#' + randomColor() + '"><b>~~ ' + message + ' ~~</b></span></center>');
 		user.disconnectAll();
 	},
 
@@ -50,7 +50,7 @@ exports.commands = {
 		if (!target || !target.trim()) return this.parse('/poof');
 		if (!target.match(/\(user\)/)) target = Tools.escapeHTML(user.name) + ' ' + target;
 		else target = target.replace(/\(user\)/, Tools.escapeHTML(user.name));
-		this.add('|html|<center><span style = "color:#' + randomColor() + '"><b>~~ ' + target.trim() + ' ~~</b></span>');
+		this.add('|html|<center><span style = "color:#' + randomColor() + '"><b>~~ ' + target.trim() + ' ~~</b></span></center>');
 		this.disconnectAll();
 	},
 
