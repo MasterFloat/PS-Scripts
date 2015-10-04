@@ -1,4 +1,5 @@
 //Tic Tac Toe by SilverTactic (Siiilver)
+//Bugs: Absolutely terrible alt/new name handling.
 if (!global.ttt) global.ttt = [{}, {}];
 var tttgames = global.ttt[0];
 var tttplayers = global.ttt[1];
