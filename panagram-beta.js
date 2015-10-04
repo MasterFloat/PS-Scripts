@@ -126,5 +126,5 @@ var cmds = {
 exports.commands = {
 	panagram: cmds,
 	endpanagram: 'endp',
-	endp: cmds.end,
+	endp: cmds.end
 }
