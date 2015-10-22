@@ -1,4 +1,4 @@
-var Ladders = require('ladders.js');
+var Ladders = require('../ladders.js');
 var tourLadder = Ladders('tournaments');
 Tournaments.Tournament.prototype.onBattleWin = function (room, winner) {
 	var from = Users.get(room.p1);
