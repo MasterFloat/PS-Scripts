@@ -1,6 +1,4 @@
-/* A small script that deals with custom avatars. Please report any bugs to me~
-~SilverTactic/Siiilver
-*/
+/*Custom Avatar script. ~SilverTactic (Siiilver)*/
 var fs = require('fs');
 var path = require('path');
 
@@ -52,7 +50,7 @@ var cmds = {
 		targetUser = (targetUser ? targetUser.name : this.targetUsername);
 	
 		var avatars = Config.customavatars;
-		if (target.indexOf('http://') !== 0) target = 'http://' + target;
+		if (target.indexOf('http://') !== 0 && target.indexOf('https://') !== 0) target = 'http://' + target;
 		var allowedFormats = ['png', 'jpg', 'jpeg', 'gif'];
 
 		var self = this;
