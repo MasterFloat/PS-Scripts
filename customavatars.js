@@ -92,7 +92,7 @@ var cmds = {
 		fs.unlinkSync('config/avatars/' + avatars[toId(target)]);
 		delete avatars[toId(target)];
 		this.sendReply(target + '\'s custom avatar has been successfully removed.');
-		if (Users.getExact(target) && Users.getExact(target).connected) {
+		if (Users.getExact(target)) {
 			Users.getExact(target).send('Your custom avatar has been removed.');
 			Users.getExact(target).avatar = 1;
 		}
@@ -102,9 +102,9 @@ var cmds = {
 	move: function (target, room, user, connection, cmd) {
 		if (!this.can('hotpatch')) return false;
 		if (!target || !target.trim()) return this.sendReply('|html|/' + cmd + ' <em>User 1</em>, <em>User 2</em> - Moves User 1\'s custom avatar to User 2.');
-		target = this.splitTarget(target);
-		var user1 = (this.targetUser ? Users.getExact(this.targetUsername).name : this.targetUsername);
-		var user2 = (Users.getExact(target) ? Users.getExact(target).name : target);
+		target = target.split(',');
+		var user1 = (Users.getExact(target[0]) ? Users.getExact(target[0]).name : target[0]);
+		var user2 = (Users.getExact(target[1]) ? Users.getExact(target[1]).name : target[1]);
 		if (!toId(user1) || !toId(user2)) return this.sendReply('|html|/' + cmd + ' <em>User 1</em>, <em>User 2</em> - Moves User 1\'s custom avatar to User 2.');
 		var user1Av = hasAvatar(user1);
 		var user2Av = hasAvatar(user2);
@@ -118,10 +118,9 @@ var cmds = {
 		avatars[toId(user2)] = newAv;
 		if (Users.getExact(user1)) Users.getExact(user1).avatar = 1;
 		if (Users.getExact(user2)) {
-			delete Users.getExact(user1).avatar;
 			Users.getExact(user1).avatar = newAv;
+			Users.getExact(user2).send(user.name + ' has moved ' + user1'\'s custom avatar to you. Refresh your page if you don\'t see it.');
 		}
-
 		return this.sendReply(user1 + '\'s custom avatar has been moved to ' + user2);
 	}
 };
