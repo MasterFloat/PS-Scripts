@@ -56,13 +56,12 @@ var cmds = {
 		var self = this;
 		require("request").get(target)
 		.on('error', function (err) {
-			console.log(err);
+			console.log('Error while setting avatar:\n' + err);
 			return self.sendReply('The selected avatar is unavailable. Try choosing a different one.');
 		})
 		.on('response', function (response) {
 			if (response.statusCode != 200) return self.sendReply('The selected avatar is unavailable. Try choosing a different one.');
 			var type = response.headers['content-type'].split('/');
-			console.log(type);
 			if (type[0] !== 'image') return self.sendReply('The selected link is not an image...');
 
 			var getUser = Users.getExact(targetUser);
