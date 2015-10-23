@@ -50,7 +50,7 @@ var cmds = {
 		targetUser = (targetUser ? targetUser.name : this.targetUsername);
 	
 		var avatars = Config.customavatars;
-		if (target.indexOf('http://') !== 0 && target.indexOf('https://') !== 0) target = 'http://' + target;
+		if (!target.match(/^http:\/\/|^https:\/\//i)) target = 'http://' + target;
 		var allowedFormats = ['png', 'jpg', 'jpeg', 'gif'];
 
 		var self = this;
