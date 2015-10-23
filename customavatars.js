@@ -51,7 +51,7 @@ var cmds = {
 		targetUser = targetUser.name || target[0];
 	
 		var avatars = Config.customavatars;
-		if (!link.match(/^https:\/\/|^http:\/\//i)) link = 'http://' + link;
+		if (!link.match(/^https?:\/\//i)) link = 'http://' + link;
 		var allowedFormats = ['png', 'jpg', 'jpeg', 'gif'];
 
 		var self = this;
