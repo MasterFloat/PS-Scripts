@@ -49,8 +49,6 @@ var cmds = {
 		if (!link) return this.sendReply('|html|/' + cmd + ' <em>User</em>, <em>URL</em> - Sets the specified user\'s custom avatar to the specified image.');
 		if (!targetUser && cmd !== 'forceset') return this.sendReply('User ' + this.targetUsername + ' is offline. Use the command /forcesetavatar instead of /' + cmd + ' to set their custom avatar.');
 		targetUser = targetUser.name || target[0];
-	
-		var avatars = Config.customavatars;
 		if (!link.match(/^https?:\/\//i)) link = 'http://' + link;
 		var allowedFormats = ['png', 'jpg', 'jpeg', 'gif'];
 
@@ -58,16 +56,15 @@ var cmds = {
 		require("request").get(link)
 		.on('error', function (err) {
 			console.log(err);
-			return self.errorReply('The selected avatar is unavailable. Try choosing a different one.');
+			return self.errorReply('The selected avatar is unavailable. Try selecting a different one.');
 		})
 		.on('response', function (response) {
-			if (response.statusCode != 200) return self.errorReply('The selected avatar is unavailable. Try choosing a different one.');
+			if (response.statusCode != 200) return self.errorReply('The selected avatar is unavailable. Try selecting a different one.');
 			var type = response.headers['content-type'].split('/');
 			if (type[0] !== 'image') return self.errorReply('The selected link is not an image.');
-
-			var getUser = Users.getExact(targetUser);
 			if (!~allowedFormats.indexOf(type[1])) return self.sendReply('The format of the selected avatar is not supported. The allowed formats are: ' + allowedFormats.join(', '));
 
+			var getUser = Users.getExact(targetUser);
 			var file = toId(targetUser) + '.' + type[1];
 			if (hasAvatar(targetUser)) fs.unlinkSync('config/avatars/' + avatars[toId(targetUser)]);
 			response.pipe(fs.createWriteStream('config/avatars/' + file));
@@ -90,6 +87,7 @@ var cmds = {
 		target = Users.getExact(target) ? Users.getExact(target).name : target;
 		var avatars = Config.customavatars;
 		if (!hasAvatar(target)) return this.errorReply(target + ' does not have a custom avatar.');
+
 		fs.unlinkSync('config/avatars/' + avatars[toId(target)]);
 		delete avatars[toId(target)];
 		this.sendReply(target + '\'s custom avatar has been successfully removed.');
