@@ -42,27 +42,28 @@ var cmds = {
 	forceset: 'set',
 	set: function (target, room, user, connection, cmd) {
 		if (!this.can('hotpatch')) return false;
-		if (!target || !target.trim()) return this.sendReply('|html|/' + cmd + ' <em>User</em>, <em>URL</em> - Sets the specified user\'s custom avatar to the specified image.');
-		target = this.splitTarget(target);
-		var targetUser = Users.getExact(this.targetUsername);
-		if (!target || !target.trim()) return this.sendReply('|html|/' + cmd + ' <em>User</em>, <em>URL</em> - Sets the specified user\'s custom avatar to the specified image.');
+		if (!target) return this.sendReply('|html|/' + cmd + ' <em>User</em>, <em>URL</em> - Sets the specified user\'s custom avatar to the specified image.');
+		target = target.split(',');
+		var targetUser = Users.getExact(target[0]);
+		var link = target[1] ? target[1].trim() : target[1];
+		if (!link) return this.sendReply('|html|/' + cmd + ' <em>User</em>, <em>URL</em> - Sets the specified user\'s custom avatar to the specified image.');
 		if (!targetUser && cmd !== 'forceset') return this.sendReply('User ' + this.targetUsername + ' is offline. Use the command /forcesetavatar instead of /' + cmd + ' to set their custom avatar.');
-		targetUser = (targetUser ? targetUser.name : this.targetUsername);
+		targetUser = targetUser.name || target[0];
 	
 		var avatars = Config.customavatars;
-		if (!target.match(/^http:\/\/|^https:\/\//i)) target = 'http://' + target;
+		if (!link.match(/^https:\/\/|^http:\/\//i)) link = 'http://' + link;
 		var allowedFormats = ['png', 'jpg', 'jpeg', 'gif'];
 
 		var self = this;
-		require("request").get(target)
+		require("request").get(link)
 		.on('error', function (err) {
-			console.log('Error while setting avatar:\n' + err);
-			return self.sendReply('The selected avatar is unavailable. Try choosing a different one.');
+			console.log(err);
+			return self.errorReply('The selected avatar is unavailable. Try choosing a different one.');
 		})
 		.on('response', function (response) {
-			if (response.statusCode != 200) return self.sendReply('The selected avatar is unavailable. Try choosing a different one.');
+			if (response.statusCode != 200) return self.errorReply('The selected avatar is unavailable. Try choosing a different one.');
 			var type = response.headers['content-type'].split('/');
-			if (type[0] !== 'image') return self.sendReply('The selected link is not an image...');
+			if (type[0] !== 'image') return self.errorReply('The selected link is not an image.');
 
 			var getUser = Users.getExact(targetUser);
 			if (!~allowedFormats.indexOf(type[1])) return self.sendReply('The format of the selected avatar is not supported. The allowed formats are: ' + allowedFormats.join(', '));
@@ -73,7 +74,7 @@ var cmds = {
 			avatars[toId(targetUser)] = file;
 			if (getUser) getUser.avatar = file;
 
-			var desc = 'custom avatar has been set to <br><div style = "width: 80px; height: 80px; display: block"><img src = "' + target + '" style = "max-height: 100%; max-width: 100%"></div>'
+			var desc = 'custom avatar has been set to <br><div style = "width: 80px; height: 80px; display: block"><img src = "' + link + '" style = "max-height: 100%; max-width: 100%"></div>';
 			self.sendReply('|html|' + targetUser + '\'s ' + desc);
 			if (getUser) {
 				getUser.send('|html|' + user.name + ' set your custom avatar. Refresh if you don\'t see it.');
@@ -85,10 +86,10 @@ var cmds = {
 	remove: 'delete',
 	'delete': function (target, room, user, connection, cmd) {
 		if (!this.can('hotpatch')) return false;
-		if (!target || !target.trim()) return this.sendReply('|html|/' + cmd + ' <em>User</em> - Deletes the specified user\'s custom avatar.');
+		if (!target || !target.trim()) return this.sendReply('|html|/' + cmd + ' <em>User</em> - Deletes a user\'s custom avatar.');
 		target = Users.getExact(target) ? Users.getExact(target).name : target;
 		var avatars = Config.customavatars;
-		if (!hasAvatar(target)) return this.sendReply('User ' + target + ' does not have a custom avatar.');
+		if (!hasAvatar(target)) return this.errorReply(target + ' does not have a custom avatar.');
 		fs.unlinkSync('config/avatars/' + avatars[toId(target)]);
 		delete avatars[toId(target)];
 		this.sendReply(target + '\'s custom avatar has been successfully removed.');
@@ -108,7 +109,7 @@ var cmds = {
 		if (!toId(user1) || !toId(user2)) return this.sendReply('|html|/' + cmd + ' <em>User 1</em>, <em>User 2</em> - Moves User 1\'s custom avatar to User 2.');
 		var user1Av = hasAvatar(user1);
 		var user2Av = hasAvatar(user2);
-		if (!user1Av) return this.sendReply(user1 + ' does not have a custom avatar.');
+		if (!user1Av) return this.errorReply(user1 + ' does not have a custom avatar.');
 
 		var avatars = Config.customavatars;
 		fs.unlinkSync('config/avatars/' + user2Av);
@@ -118,7 +119,7 @@ var cmds = {
 		avatars[toId(user2)] = newAv;
 		if (Users.getExact(user1)) Users.getExact(user1).avatar = 1;
 		if (Users.getExact(user2)) {
-			Users.getExact(user1).avatar = newAv;
+			Users.getExact(user2).avatar = newAv;
 			Users.getExact(user2).send(user.name + ' has moved ' + user1'\'s custom avatar to you. Refresh your page if you don\'t see it.');
 		}
 		return this.sendReply(user1 + '\'s custom avatar has been moved to ' + user2);
