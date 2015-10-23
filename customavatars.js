@@ -19,13 +19,6 @@ function loadAvatars() {
 }
 loadAvatars();
 
-if (Config.watchconfig) {
-	fs.watchFile(path.resolve(__dirname, 'config/config.js'), function (curr, prev) {
-		if (curr.mtime <= prev.mtime) return;
-		loadAvatars();
-	});
-}
-
 var cmds = {
 	'': 'help',
 	help: function (target, room, user) {
