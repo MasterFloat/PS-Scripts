@@ -119,7 +119,7 @@ var cmds = {
 		if (Users.getExact(user1)) Users.getExact(user1).avatar = 1;
 		if (Users.getExact(user2)) {
 			Users.getExact(user2).avatar = newAv;
-			Users.getExact(user2).send(user.name + ' has moved ' + user1'\'s custom avatar to you. Refresh your page if you don\'t see it.');
+			Users.getExact(user2).send(user.name + ' has moved ' + user1 + '\'s custom avatar to you. Refresh your page if you don\'t see it.');
 		}
 		return this.sendReply('Successfully moved ' + user1 + '\'s custom avatar to ' + user2 + '.');
 	}
