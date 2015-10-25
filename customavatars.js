@@ -20,6 +20,13 @@ function loadAvatars() {
 }
 loadAvatars();
 
+if (Config.watchconfig) {
+	fs.watchFile(path.resolve(__dirname, 'config/config.js'), function (curr, prev) {
+		if (curr.mtime <= prev.mtime) return;
+		loadAvatars();
+	});
+}
+
 var cmds = {
 	'': 'help',
 	help: function (target, room, user) {
@@ -111,7 +118,7 @@ var cmds = {
 		if (!user1Av) return this.errorReply(user1 + ' does not have a custom avatar.');
 
 		var avatars = Config.customavatars;
-		fs.unlinkSync('config/avatars/' + user2Av);
+		if (hasAvatar(user2)) fs.unlinkSync('config/avatars/' + user2Av);
 		var newAv = toId(user2) + path.extname(user1Av);
 		fs.renameSync('config/avatars/' + user1Av, 'config/avatars/' + newAv);
 		delete avatars[toId(user1)];
@@ -119,7 +126,7 @@ var cmds = {
 		if (Users.getExact(user1)) Users.getExact(user1).avatar = 1;
 		if (Users.getExact(user2)) {
 			Users.getExact(user2).avatar = newAv;
-			Users.getExact(user2).send(user.name + ' has moved ' + user1 + '\'s custom avatar to you. Refresh your page if you don\'t see it.');
+			Users.getExact(user2).send(user.name + ' has moved ' + user1 + '\'s custom avatar to you. Refresh your page if you don\'t see it under your username.');
 		}
 		return this.sendReply('Successfully moved ' + user1 + '\'s custom avatar to ' + user2 + '.');
 	}
