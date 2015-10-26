@@ -99,7 +99,7 @@ exports.commands = {
 			self.sendReplyBox(target + '\'s Tournament Elo is <b>' + Math.round(elo) + '</b>.');
 		});
 	},
-}
+
 	deletetourladder: 'resettourladder',
 	resettourladder: function (target, room, user) {
 		if (!this.can('hotpatch')) return false;
@@ -115,3 +115,4 @@ exports.commands = {
 			if (room.id !== 'lobby') this.sendReply('The Tournament Ladder has been reset.');
 		});
 	}
+}
