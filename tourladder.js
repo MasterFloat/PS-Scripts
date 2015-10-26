@@ -1,5 +1,18 @@
-var Ladders = require('../ladders.js');
+var Ladders;
+try {
+	Ladders = require('../ladders.js');
+} catch (err) {
+	Ladders = require('./ladders.js');
+}
+
 var tourLadder = Ladders('tournaments');
+var confirm = false;
+
+function display (message, self) {
+	if (self.broadcasting) return self.sendReplyBox(message);
+	return self.popupReply('|html|' + message);
+}
+
 Tournaments.Tournament.prototype.onBattleWin = function (room, winner) {
 	var from = Users.get(room.p1);
 	var to = Users.get(room.p2);
@@ -63,14 +76,18 @@ exports.commands = {
 				users.sort(function (a, b) {
 					return b[1] - a[1];
 				});
+				var padding = self.broadcasting ? '5' : '8';
 				var table = '<center><b><u>Tournament Ladder</u></b><br>' +
-					'<table border = "1" cellspacing = "0" cellpadding = "5"><tr><th>No.</th><th>User</th><th>Elo</th>';
+					'<table border = "1" cellspacing = "0" cellpadding = "' + padding + '"><tr><th>No.</th><th>User</th><th>Elo</th>';
 				for (var i = 0; i < 10; i++) {
 					if (!users[i] || users[i][1] <= 1000) break;
 					var user = (Users.getExact(users[i][0]) ? Users.getExact(users[i][0]).name : users[i][0]);
 					table += '<tr><td><center>' + (i + 1) + '</center></td><td style = "text-align: center">' + user + '</td><td style = "text-align: center">' + Math.round(users[i][1]) + '</td></tr>';
 				}
-				self.sendReplyBox(table + '</table>');
+				table += '</table></center>';
+				if (self.broadcasting && users.length > 10) table += '<center><button name = "send" value = "/tourladder"><small>Click to see the full ladder</small></button></center>';
+
+				display(table + '</table>', self);
 			});
 			return;
 		}
@@ -81,5 +98,20 @@ exports.commands = {
 			var elo = users[tourLadder.indexOfUser(target)][1];
 			self.sendReplyBox(target + '\'s Tournament Elo is <b>' + Math.round(elo) + '</b>.');
 		});
-	}
+	},
 }
+	deletetourladder: 'resettourladder',
+	resettourladder: function (target, room, user) {
+		if (!this.can('hotpatch')) return false;
+		tourLadder.load().then(function (users) {
+			if (!users.length) return this.sendReply('No rated tournaments have been played yet.');
+			if (!confirm) {
+				confirm = true;
+				return this.sendReply('WARNING: This will permanently delete all tournament ladder ratings. If you\'re sure you want to do this, use this command again.');
+			}
+			require('fs').unlinkSync('config/ladders/tournaments.csv');
+			Rooms.rooms.lobby.add('The Tournament Ladder has been reset.');
+			Rooms.rooms.lobby.update();
+			if (room.id !== 'lobby') this.sendReply('The Tournament Ladder has been reset.');
+		});
+	}
