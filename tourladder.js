@@ -110,9 +110,9 @@ exports.commands = {
 				return this.sendReply('WARNING: This will permanently delete all tournament ladder ratings. If you\'re sure you want to do this, use this command again.');
 			}
 			require('fs').unlinkSync('config/ladders/tournaments.csv');
-			Rooms.rooms.lobby.add('The Tournament Ladder has been reset.');
-			Rooms.rooms.lobby.update();
+			Rooms('lobby').add('The Tournament Ladder has been reset.');
+			Rooms('lobby').update();
 			if (room.id !== 'lobby') this.sendReply('The Tournament Ladder has been reset.');
-		});
+		}.bind(this));
 	}
 }
