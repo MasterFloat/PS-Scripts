@@ -88,6 +88,7 @@ exports.commands = {
 				if (self.broadcasting && users.length > 10) table += '<center><button name = "send" value = "/tourladder"><small>Click to see the full ladder</small></button></center>';
 
 				display(table + '</table>', self);
+				if (self.broadcasting) room.update();
 			});
 			return;
 		}
